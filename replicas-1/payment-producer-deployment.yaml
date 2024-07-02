@@ -39,7 +39,10 @@ kind: Service
 metadata:
   name: payment-producer
 spec:
-  ports:
-  - port: 8081
+  type: NodePort
   selector:
     app: payment-producer
+  ports:
+  - protocol: TCP
+    port: 8081
+    targetPort: 8081
