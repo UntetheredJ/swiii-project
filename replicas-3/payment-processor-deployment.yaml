@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-processor
+spec:
+  selector:
+    matchLabels:
+      app: payment-processor
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: payment-processor
+    spec:
+      containers:
+      - name: payment-processor
+        image: pholluxion/payment-processor:latest
+        env:
+        - name: RABBITMQ_HOST
+          value: "rabbitmq"
+        - name: RABBITMQ_PORT
+          value: "5672"
+        - name: RABBITMQ_USER
+          value: "guest"
+        - name: RABBITMQ_PASSWORD
+          value: "guest"
+        - name: POSTGRES_HOST
+          value: "postgres"
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_DATABASE
+          value: "core"
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          value: "P4ssword!"
+        volumeMounts:
+        - mountPath: /app/data
+          name: core-data
+      volumes:
+      - name: core-data
+        persistentVolumeClaim:
+          claimName: core-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-processor
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: payment-processor
