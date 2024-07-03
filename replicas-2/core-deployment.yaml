@@ -43,7 +43,10 @@ kind: Service
 metadata:
   name: core
 spec:
-  ports:
-  - port: 8080
+  type: NodePort
   selector:
     app: core
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
